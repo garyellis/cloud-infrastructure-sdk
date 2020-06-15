@@ -1,4 +1,4 @@
-# cloud infrastructure sdk
+# cloud infrastructure sdk [![Build Status](https://travis-ci.org/garyellis/cloud-infrastructure-sdk.svg?branch=master)](https://travis-ci.org/garyellis/cloud-infrastructure-sdk)
 Scaffolding framework cli for cloud infrastructure related projects.
 
 * ansible role (not started)
