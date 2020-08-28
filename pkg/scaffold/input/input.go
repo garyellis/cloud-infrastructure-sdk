@@ -20,6 +20,11 @@ const (
 
 // Input is the input for scaffolding a file
 type Input struct {
+	// CliName is the cli name written to the file
+	CliName string
+	// CliVersion is the cli version written to the file
+	CliVersion string
+
 	// Path is the file to be written
 	Path string
 
@@ -75,6 +80,26 @@ func (i *Input) SetAbsProjectPath(p string) {
 	}
 }
 
+type CliName interface {
+	SetCliName(string)
+}
+
+func (i *Input) SetCliName(c string) {
+	if i.CliName == "" {
+		i.CliName = c
+	}
+}
+
+type CliVersion interface {
+	SetCliVersion(string)
+}
+
+func (i *Input) SetCliVersion(c string) {
+	if i.CliVersion == "" {
+		i.CliVersion = c
+	}
+}
+
 // File is a scaffoldale file
 type File interface {
 	GetInput() (Input, error)
@@ -92,4 +117,6 @@ type Config struct {
 	Repo           string
 	AbsProjectPath string
 	ProjectName    string
+	CliVersion     string
+	CliName        string
 }
