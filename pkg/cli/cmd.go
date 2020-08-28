@@ -7,10 +7,12 @@ import (
 const cliName = "cloud-infra-sdk"
 
 var (
-	projectName string
-	envName     string
-	envNames    []string
-	appName     string
+	projectName   string
+	envName       string
+	envNames      []string
+	appName       string
+	dcName        string
+	infraProvider string
 )
 
 func NewRootCmd() *cobra.Command {
@@ -22,5 +24,6 @@ func NewRootCmd() *cobra.Command {
 
 	cmd.AddCommand(VersionCmd())
 	cmd.AddCommand(TerraformLiveCmd())
+	cmd.AddCommand(AnsibleTerraformCmd())
 	return cmd
 }

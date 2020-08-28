@@ -19,6 +19,10 @@ import (
 
 // Scaffold writes Templates to scaffold new files
 type Scaffold struct {
+	CliName string
+
+	CliVersion string
+
 	// Repo is the project repo name
 	Repo string
 
@@ -34,6 +38,14 @@ type Scaffold struct {
 }
 
 func (s *Scaffold) setFieldsAndValidate(t input.File) error {
+	if c, ok := t.(input.CliName); ok {
+		c.SetCliName(s.CliName)
+	}
+
+	if c, ok := t.(input.CliVersion); ok {
+		c.SetCliVersion(s.CliVersion)
+	}
+
 	if r, ok := t.(input.Repo); ok {
 		r.SetRepo(s.Repo)
 	}
@@ -54,6 +66,8 @@ func (s *Scaffold) setFieldsAndValidate(t input.File) error {
 }
 
 func (s *Scaffold) configure(cfg *input.Config) {
+	s.CliName = cfg.CliName
+	s.CliVersion = cfg.CliVersion
 	s.Repo = cfg.Repo
 	s.AbsProjectPath = cfg.AbsProjectPath
 	s.ProjectName = cfg.ProjectName

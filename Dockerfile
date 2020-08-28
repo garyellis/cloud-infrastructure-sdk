@@ -9,7 +9,7 @@ ENV WORKDIR_BASE /github.com/garyellis
 WORKDIR $WORKDIR_BASE/$NAME
 
 COPY . $WORKDIR_BASE/$NAME
-RUN package=$WORKDIR_BASE/$NAME/pkg/cli VERSION=$VERSION && \
+RUN package=github.com/garyellis/$NAME/pkg/cli VERSION=$VERSION && \
     BUILD_DATE="-X '${package}.BuildDate=$(date)'" && \
     GIT_COMMIT="-X ${package}.GitCommit=$(git rev-list -1 HEAD)" && \
     _VERSION="-X ${package}.Version=$VERSION" && \
