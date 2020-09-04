@@ -10,8 +10,8 @@ import (
 	"github.com/garyellis/cloud-infrastructure-sdk/pkg/util/projectutil"
 )
 
-// DoAnsibleTerraformScaffold creates or updates the ansible/terraform project
-func DoAnsibleTerraformScaffold(cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string) error {
+// InitAnsibleTerraformScaffold creates or updates the ansible/terraform project
+func InitAnsibleTerraformScaffold(cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string) error {
 	cfg := &input.Config{
 		AbsProjectPath: filepath.Join(projectutil.MustGetwd(), projectName),
 		ProjectName:    projectName,
@@ -57,7 +57,7 @@ func DoAnsibleTerraformScaffold(cliName, cliVersion, projectName, appName, infra
 				S3BucketRegion: "us-west-2",
 				S3KeyPrefix:    "$S3_KEY_PREFIX",
 			},
-			&ansibleterraform.EnvSh{EnvName: envName, AppName: appName, DCName: dcName},
+
 			&ansibleterraform.AnsibleInventoryGroupVarsYml{EnvName: envName, AppName: appName, DCName: dcName},
 		)
 		if err != nil {
@@ -67,11 +67,13 @@ func DoAnsibleTerraformScaffold(cliName, cliVersion, projectName, appName, infra
 		// render infrastructure provider specific templates
 		if infraProvider == "aws" {
 			err = s.Execute(cfg,
+				&ansibleterraform.EnvAwsSh{EnvName: envName, AppName: appName, DCName: dcName},
 				&ansibleterraform.TerragruntAwsHcl{EnvName: envName, AppName: appName, DCName: dcName},
 				&ansibleterraform.TerragruntAwsVars{EnvName: envName, AppName: appName, DCName: dcName},
 			)
 		} else if infraProvider == "vmware" {
 			err = s.Execute(cfg,
+				&ansibleterraform.EnvVmwareSh{EnvName: envName, AppName: appName, DCName: dcName},
 				&ansibleterraform.TerragruntVMwareHcl{EnvName: envName, AppName: appName, DCName: dcName},
 				&ansibleterraform.TerragruntVMwareVars{EnvName: envName, AppName: appName, DCName: dcName},
 			)

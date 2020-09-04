@@ -25,7 +25,7 @@ func InitAnsibleTerraformProjectCmd() *cobra.Command {
 		Use:   "init",
 		Short: "creates a new ansible-terraform project",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := sdkcmd.DoAnsibleTerraformScaffold(cliName, Version, projectName, appName, infraProvider, dcName, envNames)
+			err := sdkcmd.InitAnsibleTerraformScaffold(cliName, Version, projectName, appName, infraProvider, dcName, envNames)
 			return err
 		},
 	}
