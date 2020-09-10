@@ -30,7 +30,12 @@ const pythonHelpersShTmpl = `#!/bin/bash
 function setup_virtualenv(){
   virtualenv .${1}
   source .${1}/bin/activate
-  pip install -r requirements.txt
+
+  if [ ! -f requirements.txt ]; then
+    echo "requirements.txt not found. skipping pip install."
+  else
+    pip install -r requirements.txt
+  fi
 }
 
 

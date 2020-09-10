@@ -3,6 +3,7 @@ package cmd
 import (
 	"path/filepath"
 
+	"github.com/garyellis/cloud-infrastructure-sdk/pkg/config"
 	"github.com/garyellis/cloud-infrastructure-sdk/pkg/scaffold"
 	"github.com/garyellis/cloud-infrastructure-sdk/pkg/scaffold/ansibleterraform"
 	"github.com/garyellis/cloud-infrastructure-sdk/pkg/scaffold/input"
@@ -11,7 +12,10 @@ import (
 )
 
 // InitAnsibleTerraformScaffold creates or updates the ansible/terraform project
-func InitAnsibleTerraformScaffold(cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string) error {
+func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string) error {
+	userCfg := config.NewConfig()
+	userCfg.ReadConfigFile(configFilePath)
+
 	cfg := &input.Config{
 		AbsProjectPath: filepath.Join(projectutil.MustGetwd(), projectName),
 		ProjectName:    projectName,
@@ -25,21 +29,41 @@ func InitAnsibleTerraformScaffold(cliName, cliVersion, projectName, appName, inf
 		&scaffold.VersionSh{},
 		&scripts.HelpersSh{},
 		&scripts.AwsHelpersSh{},
-		&scripts.TerraformHelpersSh{},
+		&scripts.TerraformHelpersSh{
+			TerraformVersion:      userCfg.TerraformHelpers.TerraformVersion,
+			TerraformReleasesURL:  userCfg.TerraformHelpers.TerraformReleasesURL,
+			TerragruntVersion:     userCfg.TerraformHelpers.TerragruntVersion,
+			TerragruntDownloadURL: userCfg.TerraformHelpers.TerragruntDownloadURL,
+			TfenvRepoURL:          userCfg.TerraformHelpers.TfenvRepoURL,
+		},
 		&scripts.DockerHelpersSh{},
 		&scripts.PythonHelpersSh{},
 		&ansibleterraform.ReadmeMd{},
-		&ansibleterraform.AWSMainTf{AppName: appName},
+		&ansibleterraform.AWSMainTf{
+			AppName:                           appName,
+			TFModuleCloudInitSource:           userCfg.TerraformModuleSources.CloudInit,
+			TFModuleVaultApproleSource:        userCfg.TerraformModuleSources.VaultApprole,
+			TFModuleSecurityGroupSource:       userCfg.TerraformModuleSources.SecurityGroup,
+			TFModuleEc2InstanceSource:         userCfg.TerraformModuleSources.Ec2Instance,
+			TFModuleNetworkLoadBalancerSource: userCfg.TerraformModuleSources.NetworkLoadBalancer,
+			TFModuleRoute53ZoneSource:         userCfg.TerraformModuleSources.Route53Zone,
+		},
 		&ansibleterraform.AWSVariablesTf{AppName: appName},
 		&ansibleterraform.AWSLocalsTf{AppName: appName},
 		&ansibleterraform.AWSOutputsTf{AppName: appName},
 		&ansibleterraform.AWSUserdataSh{AppName: appName},
 		&ansibleterraform.AwsAnsileInventory{AppName: appName},
-		&ansibleterraform.VMwareMainTf{AppName: appName},
+		&ansibleterraform.VMwareMainTf{
+			AppName:                             appName,
+			TFModuleCloudInitSource:             userCfg.TerraformModuleSources.CloudInit,
+			TFModuleVaultApproleSource:          userCfg.TerraformModuleSources.VaultApprole,
+			TFModuleVsphereVirtualMachineSource: userCfg.TerraformModuleSources.VsphereVirtualMachine,
+		},
 		&ansibleterraform.VMwareVariablesTf{AppName: appName},
 		&ansibleterraform.VMwareOutputsTf{AppName: appName},
 		&ansibleterraform.VMwareUserdataSh{AppName: appName},
 		&ansibleterraform.VMwareAnsileInventory{AppName: appName},
+		&ansibleterraform.RequirementsTxt{},
 		&ansibleterraform.AnsibleCfg{},
 		&ansibleterraform.RequirementsYml{},
 		&ansibleterraform.SiteYml{},
@@ -53,8 +77,8 @@ func InitAnsibleTerraformScaffold(cliName, cliVersion, projectName, appName, inf
 			&ansibleterraform.TerragruntBaseHcl{
 				EnvName:        envName,
 				DCName:         dcName,
-				S3BucketName:   "$S3_BUCKET_NAME",
-				S3BucketRegion: "us-west-2",
+				S3BucketName:   userCfg.AnsibleTerraform.S3BucketNamePrefix,
+				S3BucketRegion: userCfg.AnsibleTerraform.S3BucketRegion,
 				S3KeyPrefix:    "$S3_KEY_PREFIX",
 			},
 

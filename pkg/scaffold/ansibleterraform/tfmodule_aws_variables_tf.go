@@ -113,7 +113,13 @@ variable "nodes_instance_type" {
   description = "The nodes instance type"
   type        = string
   default     = "t3.large"
-  }
+}
+
+variable "ebs_block_device" {
+	description = "A list additional ebs block devices"
+	type = list(map(string))
+	default = []
+}
 
 variable "nodes_subnet_ids" {
   description = "the ec2 instances subnet ids"

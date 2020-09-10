@@ -11,8 +11,14 @@ const awsTfModuleDir = "aws"
 
 type AWSMainTf struct {
 	input.Input
-	EnvName string
-	AppName string
+	EnvName                           string
+	AppName                           string
+	TFModuleVaultApproleSource        string
+	TFModuleCloudInitSource           string
+	TFModuleEc2InstanceSource         string
+	TFModuleSecurityGroupSource       string
+	TFModuleNetworkLoadBalancerSource string
+	TFModuleRoute53ZoneSource         string
 }
 
 func (t *AWSMainTf) GetInput() (input.Input, error) {
@@ -32,7 +38,7 @@ provider "aws" {
 }
 
 module "cloud_init" {
-  source = "git::ssh://git@stash.ews.int:7999/terrm/garyellis-tf-module-cloud-init.git"
+  source = "{{.TFModuleCloudInitSource}}"
 
   base64_encode          = false
   gzip                   = false
@@ -43,7 +49,7 @@ module "cloud_init" {
   }
 
 module "vault_approle" {
-  source = "git::ssh://git@stash.ews.int:7999/terrm/vault-auth.git?ref=v0.2.1"
+  source = "{{.TFModuleVaultApproleSource}}"
 
   name                                = var.name
   vault_count_approle_wrapping_tokens = var.nodes_count
@@ -52,7 +58,7 @@ module "vault_approle" {
 }
 
 module "sg" {
-  source = "git::ssh://git@stash.ews.int:7999/terrm/garyellis-tf-module-aws-security-group.git?ref=v0.2.0"
+  source = "{{.TFModuleSecurityGroupSource}}"
 
   description                      = var.name
   self_security_group_rules        = local.rules
@@ -65,7 +71,7 @@ module "sg" {
 }
 
 module "nodes" {
-  source = "git::ssh://git@stash.ews.int:7999/terrm/garyellis-tf-module-aws-instance.git?ref=v1.3.0"
+  source = "{{.TFModuleEc2InstanceSource}}"
 
   count_instances                = var.nodes_count
   disable_api_termination        = var.disable_api_termination
@@ -78,15 +84,7 @@ module "nodes" {
     delete_on_termination = "true",
      encrypted = "true"
   }]
-  ebs_block_device               = [
-   {
-     device_name = "/dev/xvdb",
-     volume_type = "gp2",
-     volume_size = 10,
-     delete_on_termination = "true",
-     encrypted = "true"
-   }
-  ]
+  ebs_block_device               = var.ebs_block_device
 
   key_name                       = var.key_name
   name                           = var.name
@@ -97,7 +95,7 @@ module "nodes" {
 }
 
 module "lb" {
-  source = "git::ssh://git@stash.ews.int:7999/terrm/garyellis-tf-module-aws-nlb.git?ref=v0.1.2"
+  source = "{{.TFModuleNetworkLoadBalancerSource}}"
 
   name                       = var.name
   enable_deletion_protection = false
@@ -126,7 +124,7 @@ locals {
 }
 
 module "lb_dns" {
-  source = "git::ssh://git@stash.ews.int:7999/terrm/garyellis-tf-module-aws-route53-zone.git"
+  source = "{{.TFModuleRoute53ZoneSource}}"
 
   create_zone           = false
   name                  = var.dns_domain

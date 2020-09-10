@@ -6,7 +6,7 @@ import (
 	"github.com/garyellis/cloud-infrastructure-sdk/pkg/scaffold/input"
 )
 
-const requirementsYmlFile = "ansible.cfg"
+const requirementsYmlFile = "requirements.yml"
 
 type RequirementsYml struct {
 	input.Input

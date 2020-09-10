@@ -11,6 +11,7 @@ func AnsibleTerraformCmd() *cobra.Command {
 		Use:   "ansible-terraform",
 		Short: "create an ansible-terraform project",
 	}
+	ansibleTerraformCmd.PersistentFlags().StringVar(&configFile, "config", "config.yaml", "the teraform live project name")
 	ansibleTerraformCmd.PersistentFlags().StringVar(&projectName, "project-name", "my-project", "the teraform live project name")
 	ansibleTerraformCmd.PersistentFlags().StringVar(&appName, "app-name", "my-app", "the terraform live live subfolder name")
 	ansibleTerraformCmd.PersistentFlags().StringVar(&infraProvider, "infra-provider", "aws", "infrastructure provider. Valid providers are aws and vmware")
@@ -25,7 +26,7 @@ func InitAnsibleTerraformProjectCmd() *cobra.Command {
 		Use:   "init",
 		Short: "creates a new ansible-terraform project",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := sdkcmd.InitAnsibleTerraformScaffold(cliName, Version, projectName, appName, infraProvider, dcName, envNames)
+			err := sdkcmd.InitAnsibleTerraformScaffold(configFile, cliName, Version, projectName, appName, infraProvider, dcName, envNames)
 			return err
 		},
 	}

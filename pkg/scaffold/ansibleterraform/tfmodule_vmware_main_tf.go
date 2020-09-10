@@ -11,8 +11,11 @@ const vmwareTfModuleDir = "vmware"
 
 type VMwareMainTf struct {
 	input.Input
-	EnvName string
-	AppName string
+	EnvName                             string
+	AppName                             string
+	TFModuleVaultApproleSource          string
+	TFModuleCloudInitSource             string
+	TFModuleVsphereVirtualMachineSource string
 }
 
 func (t *VMwareMainTf) GetInput() (input.Input, error) {
@@ -31,7 +34,7 @@ locals {
 }
 
 module "vault_approle" {
-  source = "git::ssh://git@stash.ews.int:7999/terrm/vault-auth.git?ref=v0.2.1"
+  source = "{{.TFModuleVaultApproleSource}}"
 
   name                                = var.name
   vault_count_approle_wrapping_tokens = local.vault_count_approle_secret_wrapping_tokens
@@ -40,7 +43,7 @@ module "vault_approle" {
 
 
 module "cloud_init_secret" {
-  source = "git::ssh://git@stash.ews.int:7999/terrm/vault-wrapping-token.git?ref=v0.1.0"
+  source = "{{.TFModuleCloudInitSource}}"
 
   count_wrapping_tokens = length(var.nodes)
   ttl                   = 900
@@ -60,7 +63,7 @@ locals {
 }
 
 module "nodes" {
-  source = "git::ssh://git@stash.ews.int:7999/terrm/ews-vsphere-virtual-machine.git?ref=v0.3.1"
+  source = "{{.TFModuleVsphereVirtualMachineSource}}"
 
   vsphere_dc_name          = var.vsphere_dc_name
   vsphere_cluster_name     = var.vsphere_cluster_name
