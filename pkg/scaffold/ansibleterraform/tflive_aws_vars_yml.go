@@ -6,7 +6,7 @@ import (
 	"github.com/garyellis/cloud-infrastructure-sdk/pkg/scaffold/input"
 )
 
-const terragruntAwsVarsFile = "vars.yml"
+const terragruntAwsVarsFile = "vars.yaml"
 
 type TerragruntAwsVars struct {
 	input.Input

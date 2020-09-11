@@ -39,10 +39,10 @@ EOF
 }
 
 remote_state {
-  backend = "s3
+  backend = "s3"
     config = {
       bucket = "{{.S3BucketName}}"
-      key = "cloud-infra-sdk/{{.ProjectName}}/iaas/terraform/live/{{.DCName}}/{{.EnvName}}/${path_relative_to_include()/terraform.tfstate"
+      key = "cloud-infra-sdk/{{.ProjectName}}/iaas/terraform/live/{{.DCName}}/{{.EnvName}}/${path_relative_to_include()}/terraform.tfstate"
       region = "{{.S3BucketRegion}}"
       encrypt = true
     }

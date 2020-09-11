@@ -18,9 +18,9 @@ type Scripts struct {
 }
 
 type DockerHelpers struct {
-	DockerCeVersion        string `yaml:"docker_ce_version,omitempty"`
-	DockerCeURL            string `yaml:"docker_ce_url,omitempty"`
-	CiPipelinesDockerImage string `yaml:"pipeline_docker_image,omitempty"`
+	DockerCeVersion string `yaml:"docker_ce_version,omitempty"`
+	DockerCeURL     string `yaml:"docker_ce_url,omitempty"`
+	Image           string `yaml:"image,omitempty"`
 }
 
 type TerraformHelpers struct {
@@ -47,23 +47,23 @@ func NewConfig() *Config {
 				TfenvRepoURL:          "https://github.com/tfutils/tfenv.git",
 			},
 			VaultHelpers{
-				VaultSshCertPrincipal:    "",
-				VaultSshClientSignerPath: "",
+				VaultSshCertPrincipal:    "$USER",
+				VaultSshClientSignerPath: "ssh-client-signer",
 			},
 			DockerHelpers{
-				DockerCeVersion:        "",
-				DockerCeURL:            "",
-				CiPipelinesDockerImage: "",
+				DockerCeVersion: "",
+				DockerCeURL:     "",
+				Image:           "garyellis/pipelines-runner:0.1.0",
 			},
 		},
 		AnsibleTerraform{
 			TerraformModuleSources: TerraformModuleSources{
-				CloudInit:             "github.com/garyellis/cloud-init",
-				VaultApprole:          "github.com/garyellis/vault-approle",
-				SecurityGroup:         "github.com/garyellis/security-group",
-				Ec2Instance:           "github.com/garyellis/ec2-instance",
-				NetworkLoadBalancer:   "github.com/garyellis/network-loadbalancer",
-				Route53Zone:           "github.com/garyellis/route53-zone",
+				CloudInit:             "github.com/garyellis/tf_cloud_init?ref=v0.2.1",
+				VaultApprole:          "github.com/garyellis/terraform-hashicorp-vault.git//approle?ref=v0.1.0",
+				SecurityGroup:         "github.com/garyellis/tf_module_aws_security_group?ref=v0.2.1",
+				Ec2Instance:           "github.com/garyellis/tf_module_aws_instance?ref=v1.3.2",
+				NetworkLoadBalancer:   "github.com/garyellis/tf_module_aws_nlb?ref=v0.1.2",
+				Route53Zone:           "github.com/garyellis/tf_module_aws_route53_zone?ref=v0.1.2",
 				VsphereVirtualMachine: "github.com/garyellis/vsphere-virtualmachine",
 			},
 		},
