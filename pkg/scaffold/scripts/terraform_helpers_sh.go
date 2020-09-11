@@ -10,6 +10,11 @@ const terraformHelpersShFile = "terraform-helpers.sh"
 
 type TerraformHelpersSh struct {
 	input.Input
+	TerraformVersion      string
+	TerraformReleasesURL  string
+	TerragruntVersion     string
+	TerragruntDownloadURL string
+	TfenvRepoURL          string
 }
 
 func (h *TerraformHelpersSh) GetInput() (input.Input, error) {
@@ -28,11 +33,12 @@ const TerraformHelpersShTmpl = `#!/bin/bash
 #### edits to this file will be overwritten the next time {{.CliName}} runs on this project
 
 # terraform-helpers config
-TERRAFORM_VERSION=0.12.25
-TERRAGRUNT_VERSION=v0.22.4
-TERRAGRUNT_DOWNLOAD_URL=https://artifactory.ews.int:443/artifactory/third-party-binaries/terragrunt/$TERRAGRUNT_VERSION/terragrunt_linux_amd64
-TFENV_REPO_URL=ssh://git@stash.ews.int:7999/ter/tfenv.git
-TERRAFORM_RELEASES_URL=https://artifactory.ews.int/artifactory/releases-hashicorp/terraform/
+TERRAFORM_VERSION={{.TerraformVersion}}
+TERRAGRUNT_VERSION={{.TerragruntVersion}}
+TERRAGRUNT_DOWNLOAD_URL={{.TerragruntDownloadURL}}
+TFENV_REPO_URL={{.TfenvRepoURL}}
+TERRAFORM_RELEASES_URL={{.TerraformReleasesURL}}
+
 
 # source the project config when it exists
 [ -e "./scripts/config.sh" ] && source ./scripts/config.sh
@@ -62,13 +68,17 @@ function terragrunt(){
 }
 
 function terraform_plugins(){
+  if [ ! -f $2 ]; then
+    echo "terraform-plugins does not exist. skipping"
+  else
     mkdir -p $1
     while read plugin; do
-        filename=$(basename $plugin)
-        curl -RO $plugin
-        unzip -o $filename -d $1
-        rm -f $filename
+      filename=$(basename $plugin)
+      curl -RO $plugin
+      unzip -o $filename -d $1
+      rm -f $filename
     done < $2
+   fi
 }
 
 function terraform_clean(){

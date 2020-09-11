@@ -13,6 +13,7 @@ var (
 	appName       string
 	dcName        string
 	infraProvider string
+	configFile    string
 )
 
 func NewRootCmd() *cobra.Command {
