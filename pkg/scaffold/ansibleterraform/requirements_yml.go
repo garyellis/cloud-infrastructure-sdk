@@ -8,8 +8,16 @@ import (
 
 const requirementsYmlFile = "requirements.yml"
 
+type AnsibleRole struct {
+	Src     string
+	Name    string
+	Version string
+}
+
 type RequirementsYml struct {
 	input.Input
+	AppRoles []AnsibleRole
+	OSRoles  []AnsibleRole
 }
 
 func (t *RequirementsYml) GetInput() (input.Input, error) {
@@ -24,42 +32,14 @@ func (t *RequirementsYml) GetInput() (input.Input, error) {
 }
 
 const requirementsYmlTmpl = `---
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/repository.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/environment.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/environment.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/ntp.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/logging-agent.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/av.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/ssh.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/linux-common.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/monitoring-agent1.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/monitoring-agent2.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/ldap-client.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/lvm.git
-  version: v0.1.0
-
-- src: git+ssh://$GIT_HOSTNAME:7999/$GIT_PROJECT/vault-agent.git
-  version: v0.1.0
+# os roles{{range $element := .OSRoles }}
+- name: {{.Name}}
+  src: {{.Src}}
+  version: {{.Version}}
+{{- end}}
+# middleware roles{{range $element := .AppRoles }}
+- name: {{.Name}}
+  src: {{.Src}}
+  version: {{.Version}}
+{{- end}}
 `

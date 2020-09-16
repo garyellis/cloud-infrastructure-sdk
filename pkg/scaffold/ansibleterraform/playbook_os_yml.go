@@ -10,6 +10,7 @@ const osYmlFile = "os.yml"
 
 type OSYml struct {
 	input.Input
+	OSRoles []AnsibleRole
 }
 
 func (t *OSYml) GetInput() (input.Input, error) {
@@ -24,5 +25,9 @@ func (t *OSYml) GetInput() (input.Input, error) {
 }
 
 const osYmlTmpl = `---
-
+- name: converge the os roles
+  hosts: all
+  roles:{{range $element := .OSRoles}}
+    - {{.Name}}
+  {{- end}}
 `

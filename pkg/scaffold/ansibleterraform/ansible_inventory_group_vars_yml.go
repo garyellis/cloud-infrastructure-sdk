@@ -18,7 +18,7 @@ type AnsibleInventoryGroupVarsYml struct {
 
 func (t *AnsibleInventoryGroupVarsYml) GetInput() (input.Input, error) {
 	if t.Path == "" {
-		t.Path = filepath.Join(AnsibleInventoryDir, t.DCName, t.EnvName, fmt.Sprintf(ansibleInventoryGroupVarsYml, t.AppName))
+		t.Path = filepath.Join(AnsibleInventoryDir, t.DCName, t.EnvName, "group_vars", fmt.Sprintf(ansibleInventoryGroupVarsYml, t.AppName))
 	}
 	t.TemplateBody = ansibleInventoryGroupVarsYmlTmpl
 
@@ -28,6 +28,11 @@ func (t *AnsibleInventoryGroupVarsYml) GetInput() (input.Input, error) {
 }
 
 const ansibleInventoryGroupVarsYmlTmpl = `---
+env_name: "{{.EnvName}}"
+dc_name: "{{.DCName}}"
+app_name: "{{.AppName}}"
+
+
 ## ssh config
 ssh_ca_urls:
   - "https://vault-dev.ews.int/v1/ssh-client-signer/public_key"

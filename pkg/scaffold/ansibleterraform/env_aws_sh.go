@@ -18,6 +18,8 @@ type EnvAwsSh struct {
 	EnvName             string
 	AppName             string
 	DCName              string
+	AWSRegion           string
+	VaultAddr           string
 	TfLiveBaseDir       string
 	AnsibleInventoryDir string
 }
@@ -30,7 +32,7 @@ func (t *EnvAwsSh) GetInput() (input.Input, error) {
 	t.TfLiveBaseDir = TfLiveBaseDir
 	t.AnsibleInventoryDir = AnsibleInventoryDir
 
-	t.TemplateBody = envVmwareTmpl
+	t.TemplateBody = envAwsTmpl
 
 	t.IfExistsAction = input.Skip
 
@@ -39,11 +41,11 @@ func (t *EnvAwsSh) GetInput() (input.Input, error) {
 
 const envAwsTmpl = `
 export AWS_CA_BUNDLE=/etc/ssl/certs/ca-bundle.crt
-export AWS_REGION=<set-by-user>
-export ASSUME_ROLE_ARN=${ASSUME_ROLE_ARN}
-export VAULT_ADDR=<set by user>
+export AWS_REGION={{.AWSRegion}}
+export ASSUME_ROLE_ARN=${ASSUME_ROLE_ARN} # set by user
+export VAULT_ADDR={{.VaultAddr}}
 export VAULT_SSH_CERT_PRINCIPAL=${VAULT_SSH_CERT_PRINCIPAL} # set by user
-export VAULT_SSH_CLIENT_SIGNER_PATH=<ssh-ca-engine-name>/sign/<ssh-role-name>
+export VAULT_SSH_CLIENT_SIGNER_PATH=ssh-ca-engine-name/sign/ssh-role-name # set by user
 
 
 ## set environment for the automation user

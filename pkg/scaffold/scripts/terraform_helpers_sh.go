@@ -63,7 +63,7 @@ function tfenv(){
 
 function terragrunt(){
   mkdir -p ./bin
-  curl -o ./bin/terragrunt $TERRAGRUNT_DOWNLOAD_URL
+  curl -o ./bin/terragrunt -L $TERRAGRUNT_DOWNLOAD_URL
   chmod 755 ./bin/terragrunt
 }
 
@@ -74,7 +74,7 @@ function terraform_plugins(){
     mkdir -p $1
     while read plugin; do
       filename=$(basename $plugin)
-      curl -RO $plugin
+      curl -L -RO $plugin
       unzip -o $filename -d $1
       rm -f $filename
     done < $2

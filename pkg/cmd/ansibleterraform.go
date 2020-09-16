@@ -12,9 +12,14 @@ import (
 )
 
 // InitAnsibleTerraformScaffold creates or updates the ansible/terraform project
-func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string) error {
+func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string, vaultAddr, awsRegion, s3BucketName, s3BucketRegion string) error {
 	userCfg := config.NewConfig()
 	userCfg.ReadConfigFile(configFilePath)
+
+	if s3BucketName != "" && s3BucketRegion != "" {
+		userCfg.AnsibleTerraform.S3BucketNamePrefix = s3BucketName
+		userCfg.AnsibleTerraform.S3BucketRegion = s3BucketRegion
+	}
 
 	cfg := &input.Config{
 		AbsProjectPath: filepath.Join(projectutil.MustGetwd(), projectName),
@@ -65,9 +70,14 @@ func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectNa
 		&ansibleterraform.VMwareAnsileInventory{AppName: appName},
 		&ansibleterraform.RequirementsTxt{},
 		&ansibleterraform.AnsibleCfg{},
-		&ansibleterraform.RequirementsYml{},
+		&ansibleterraform.RequirementsYml{
+			OSRoles:  userCfg.AnsibleTerraform.AnsibleRoleSources.OSRoleSources,
+			AppRoles: userCfg.AnsibleTerraform.AnsibleRoleSources.AppRoleSources,
+		},
 		&ansibleterraform.SiteYml{},
-		&ansibleterraform.OSYml{},
+		&ansibleterraform.OSYml{
+			OSRoles: userCfg.AnsibleTerraform.AnsibleRoleSources.OSRoleSources,
+		},
 		&ansibleterraform.MiddlewareYml{},
 	)
 
@@ -91,15 +101,15 @@ func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectNa
 		// render infrastructure provider specific templates
 		if infraProvider == "aws" {
 			err = s.Execute(cfg,
-				&ansibleterraform.EnvAwsSh{EnvName: envName, AppName: appName, DCName: dcName},
+				&ansibleterraform.EnvAwsSh{EnvName: envName, AppName: appName, DCName: dcName, AWSRegion: awsRegion, VaultAddr: vaultAddr},
 				&ansibleterraform.TerragruntAwsHcl{EnvName: envName, AppName: appName, DCName: dcName},
-				&ansibleterraform.TerragruntAwsVars{EnvName: envName, AppName: appName, DCName: dcName},
+				&ansibleterraform.TerragruntAwsVars{EnvName: envName, AppName: appName, DCName: dcName, AWSRegion: awsRegion, VaultAddr: vaultAddr},
 			)
 		} else if infraProvider == "vmware" {
 			err = s.Execute(cfg,
-				&ansibleterraform.EnvVmwareSh{EnvName: envName, AppName: appName, DCName: dcName},
+				&ansibleterraform.EnvVmwareSh{EnvName: envName, AppName: appName, DCName: dcName, VaultAddr: vaultAddr},
 				&ansibleterraform.TerragruntVMwareHcl{EnvName: envName, AppName: appName, DCName: dcName},
-				&ansibleterraform.TerragruntVMwareVars{EnvName: envName, AppName: appName, DCName: dcName},
+				&ansibleterraform.TerragruntVMwareVars{EnvName: envName, AppName: appName, DCName: dcName, VaultAddr: vaultAddr},
 			)
 		}
 

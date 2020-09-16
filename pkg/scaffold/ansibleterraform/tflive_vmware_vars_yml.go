@@ -10,9 +10,10 @@ const terragruntVMwareVarsFile = "vars.yml"
 
 type TerragruntVMwareVars struct {
 	input.Input
-	EnvName string
-	AppName string
-	DCName  string
+	EnvName   string
+	AppName   string
+	DCName    string
+	VaultAddr string
 }
 
 func (t *TerragruntVMwareVars) GetInput() (input.Input, error) {
@@ -42,7 +43,7 @@ vsphere_network_names:
   additional_disks: []
   nodes: []
 
-vault_addr: ""
+vault_addr: "{{.VaultAddr}}"
 vault_ssh_ca_path: ""
 vault_secret_kv_path: ""
 vault_secret_vas_username_key: ""

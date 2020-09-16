@@ -10,6 +10,7 @@ const middlewareYmlFile = "middleware.yml"
 
 type MiddlewareYml struct {
 	input.Input
+	AppName string
 }
 
 func (t *MiddlewareYml) GetInput() (input.Input, error) {
@@ -24,5 +25,9 @@ func (t *MiddlewareYml) GetInput() (input.Input, error) {
 }
 
 const middlewareYmlTmpl = `---
-
+- name: converge the application roles
+  hosts: {{.AppName}}
+  roles:{{range $element := .OSRoles}}
+    - {{.Name}}
+  {{- end}}
 `
