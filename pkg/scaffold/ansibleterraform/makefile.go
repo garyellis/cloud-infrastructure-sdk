@@ -100,7 +100,7 @@ ansible-galaxy: ## runs ansible-galaxy to install ansible role dependencies     
 	$(ENABLE_VIRTUALENV) ; ansible-galaxy install -r ./app/ansible/requirements.yml -p ./app/ansible/roles -f
 
 ansible-playbook: ## runs ansible-playbook on the APP_ENV inventory                                 Usage: ENV=./env/<dc-name>/<env-name>.sh make ansible-playbook
-	$(ENABLE_VIRTUALENV) ; $(ANSIBLE_ENV); $(USER_ENV); cd ./app/ansible && ansible-playbook -u $$VAULT_SSH_CERT_PRINCIPAL -b ./playbooks/site.yml -e "@./vars/global.yml" -e "ansible_password=$$TF_VAR_provisioner_ssh_password"
+	$(ENABLE_VIRTUALENV) ; $(ANSIBLE_ENV); $(USER_ENV); cd ./app/ansible && ansible-playbook -u $$VAULT_SSH_CERT_PRINCIPAL -b ./playbooks/site.yml -e "@./vars/overrides.yml" -e "ansible_password=$$TF_VAR_provisioner_ssh_password"
 
 package: ## packages the project into a tarball for distribution                                    Usage: make package
 	./scripts/helpers.sh package

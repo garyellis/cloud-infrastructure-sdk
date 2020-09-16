@@ -76,9 +76,13 @@ func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectNa
 		},
 		&ansibleterraform.SiteYml{},
 		&ansibleterraform.OSYml{
-			OSRoles: userCfg.AnsibleTerraform.AnsibleRoleSources.OSRoleSources,
+			AnsibleRoles: userCfg.AnsibleTerraform.AnsibleRoleSources.OSRoleSources,
 		},
-		&ansibleterraform.MiddlewareYml{},
+		&ansibleterraform.ApplicationYml{
+			AppName:      appName,
+			AnsibleRoles: userCfg.AnsibleTerraform.AnsibleRoleSources.AppRoleSources,
+		},
+		&ansibleterraform.VarsOverrideYml{},
 	)
 
 	// run through instances of templates

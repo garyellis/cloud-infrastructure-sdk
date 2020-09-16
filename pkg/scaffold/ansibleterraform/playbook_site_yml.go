@@ -25,5 +25,5 @@ func (t *SiteYml) GetInput() (input.Input, error) {
 
 const siteYmlTmpl = `---
 - import_playbook: os.yml
-- import_playbook: middleware.yml
+- import_playbook: app.yml
 `

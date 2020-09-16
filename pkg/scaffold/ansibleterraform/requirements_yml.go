@@ -37,7 +37,7 @@ const requirementsYmlTmpl = `---
   src: {{.Src}}
   version: {{.Version}}
 {{- end}}
-# middleware roles{{range $element := .AppRoles }}
+# application roles{{range $element := .AppRoles }}
 - name: {{.Name}}
   src: {{.Src}}
   version: {{.Version}}
