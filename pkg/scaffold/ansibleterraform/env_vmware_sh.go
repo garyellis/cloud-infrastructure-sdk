@@ -18,6 +18,8 @@ type EnvVmwareSh struct {
 	EnvName             string
 	AppName             string
 	DCName              string
+	AWSRegion           string
+	VaultAddr           string
 	TfLiveBaseDir       string
 	AnsibleInventoryDir string
 }
@@ -40,7 +42,7 @@ func (t *EnvVmwareSh) GetInput() (input.Input, error) {
 const envVmwareTmpl = `
 ## setup the vault environment
 export AWS_CA_BUNDLE=/etc/ssl/certs/ca-bundle.crt
-export VAULT_ADDR=<set by user>
+export VAULT_ADDR={{.VaultAddr}}
 export VAULT_SSH_CERT_PRINCIPAL=${VAULT_SSH_CERT_PRINCIPAL} # set by user
 export VAULT_SSH_CLIENT_SIGNER_PATH=ssh-client-signer/sign/vault-dev_ansible
 
@@ -63,8 +65,8 @@ fi
 
 ## setup the iaas provider
 ## iaas provider depends on s3 remote state
-export AWS_REGION=<set-by-user>
-export ASSUME_ROLE_ARN=<required-for-users>
+export AWS_REGION={{.AWSRegion}}
+export ASSUME_ROLE_ARN=$ASSUME_ROLE_ARN # set by the user
 
 export VSPHERE_SERVER=<set-by-user>
 

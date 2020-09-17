@@ -1,9 +1,14 @@
 package config
 
+import (
+	"github.com/garyellis/cloud-infrastructure-sdk/pkg/scaffold/ansibleterraform"
+)
+
 type AnsibleTerraform struct {
 	S3BucketRegion         string `yaml:"s3_bucket_region,omitempty"`
 	S3BucketNamePrefix     string `yaml:"s3_bucket_name_prefix,omitempty"`
 	TerraformModuleSources `yaml:"terraform_modules,omitempty"`
+	AnsibleRoleSources     `yaml:"ansible_roles,omitempty"`
 }
 
 type TerraformModuleSources struct {
@@ -15,3 +20,15 @@ type TerraformModuleSources struct {
 	Route53Zone           string `yaml:"route53_zone,omitempty"`
 	VsphereVirtualMachine string `yaml:"vsphere_virtualmachine,omitempty"`
 }
+
+type AnsibleRoleSources struct {
+	AppRoleSources []ansibleterraform.AnsibleRole `yaml:"app_roles,omitempty"`
+	OSRoleSources  []ansibleterraform.AnsibleRole `yaml:"os_roles,omitempty"`
+}
+
+/*
+type AnsibleRoleSource struct {
+	Src     string `yaml:"src,omitempty"`
+	Version string `yaml:"version,omitempty"`
+}
+*/

@@ -10,9 +10,11 @@ const terragruntAwsVarsFile = "vars.yaml"
 
 type TerragruntAwsVars struct {
 	input.Input
-	EnvName string
-	AppName string
-	DCName  string
+	EnvName   string
+	AppName   string
+	DCName    string
+	AWSRegion string
+	VaultAddr string
 }
 
 func (t *TerragruntAwsVars) GetInput() (input.Input, error) {
@@ -30,7 +32,7 @@ const terragruntAwsVarsTmpl = `---
 name: {{.AppName}}-{{.DCName}}-{{.EnvName}}
 
 
-region: ""
+region: "{{.AWSRegion}}"
 allowed_account_ids: []
 tags:
   dcname: {{.DCName}}
@@ -38,8 +40,8 @@ tags:
 
 {{.AppName}}:
   nodes_count: 1
-  nodes_instance_type:
-  ami_id:
+  nodes_instance_type: t3.medium
+  ami_id: ami-3ecc8f46
   key_name: ""
   disable_api_termination: false
   instance_auto_recovery_enabled: false
@@ -49,9 +51,10 @@ tags:
   sg_egress_cidr_rules: []
   sg_ingress_cidr_rules: []
   lb_subnet_ids: []
-  dns_domain: ""
-  dns_zone_id: ""
 
-vault_addr: ""
+dns_domain: ""
+dns_zone_id: ""
+
+vault_addr: "{{.VaultAddr}}"
 vault_ssh_ca_path: ""
 `

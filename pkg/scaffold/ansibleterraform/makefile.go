@@ -52,8 +52,8 @@ dependencies: ## install dependencies and setup local environment
 version: ## renders version file
 	source ./version && for i in $$(awk -F'=' '/^[A-Z]/ {print $$1}' ./version); do echo $$i=$${!i} || exit 1; done > version.rendered
 
-metadata: version ## creates metadata files
-	@./iaas/terraform/live/metadata.yaml.sh
+metadata: version ## creates metadata files Usage: 
+	#@./iaas/terraform/live/metadata.yaml.sh
 
 molecule-converge: ## runs molecule converge
 	cd ./app/ansible && molecule converge
@@ -67,41 +67,41 @@ molecule-list: ## runs molecule list
 molecule-login: ## runs molecule login on the target host
 	cd ./app/ansible && molecule login --host $(HOST)
 
-terragrunt-init: metadata ## runs terragrunt init on the target directory
+terragrunt-init: metadata ## runs terragrunt init on the target directory                           Usage: ENV=./env/<dc-name>/<env-name>.sh make terragrunt-init
 	source $(ENV) && cd $$IAAS_ENV/{{.AppName}} && TF_INPUT=0 terragrunt init
 
-terragrunt-plan: terragrunt-init ## runs terragrunt plan
+terragrunt-plan: terragrunt-init ## runs terragrunt plan                                            Usage: ENV=./env/<dc-name>/<env-name>.sh make terragrunt-plan
 	mkdir -p ./reports
 	source $(ENV) && (cd $$IAAS_ENV/{{.AppName}}; terragrunt plan) | tee ./reports/$$(basename $$ENV | sed 's/.sh//')-terragrunt-plan.log
 
-terragrunt-apply: terragrunt-init ## runs terragrunt apply
+terragrunt-apply: terragrunt-init ## runs terragrunt apply                                          Usage: ENV=./env/<dc-name>/<env-name>.sh make terragrunt-apply
 	source $(ENV) && cd $$IAAS_ENV/{{.AppName}} && terragrunt apply -auto-approve
 
-terragrunt-destroy: terragrunt-init ## runs terragrunt destroy
+terragrunt-destroy: terragrunt-init ## runs terragrunt destroy                                      Usage: ENV=./env/<dc-name>/<env-name>.sh make terragrunt-apply
 	source $(ENV) && cd $$IAAS_ENV/{{.AppName}} && terragrunt destroy -auto-approve
 
-generate-ansible-inventory: terragrunt-init ## generates ansible inventory from terraform outputs
+generate-ansible-inventory: terragrunt-init ## generates ansible inventory from terraform outputs   Usage: ENV=./env/<dc-name>/<env-name>.sh make generate-ansible-inventory
 	$(TERRAFORM_ENV) && echo "$$(cd $$IAAS_ENV/{{.AppName}} && terragrunt output ansible_inventory)" > $$APP_ENV/inventory.yml
 	$(ENABLE_VIRTUALENV) ; $(ANSIBLE_ENV) && ansible-inventory --graph
 
-ansible-inventory: ## runs ansible-inventory to list inventory hosts
+ansible-inventory: ## runs ansible-inventory to list inventory hosts                                Usage: ENV=./env/<dc-name>/<env-name>.sh make ansible-inventory
 	$(ENABLE_VIRTUALENV) ; $(ANSIBLE_ENV) && env|grep APP_ENV && ansible-inventory --graph
 
 get-ssh-cert: ## gets an ssh cert from vault
 	source $(ENV) && ./scripts/vault-helpers.sh vault_get_ssh_cert
 
-ansible-ping: ## validates ssh connectivity on the target ansible inventory
+ansible-ping: ## validates ssh connectivity on the target ansible inventory                         Usage: ENV=./env/<dc-name>/<env-name>.sh make ansible-ping
 	$(ENABLE_VIRTUALENV); $(ANSIBLE_ENV); $(USER_ENV); ansible -m ping all -u $$VAULT_SSH_CERT_PRINCIPAL
 
-ansible-shell: ## runs ansible shell module CMD on the target inventory
+ansible-shell: ## runs ansible shell module CMD on the target inventory                             Usage: ENV=./env/<dc-name>/<env-name>.sh make ansible-shell CMD="<remote command>"
 	$(ENABLE_VIRTUALENV); $(ANSIBLE_ENV); $(USER_ENV); ansible -u $$VAULT_SSH_CERT_PRINCIPAL -m shell -a "$$CMD" all
 
-ansible-galaxy: ## runs ansible-galaxy to install ansible role dependencies
+ansible-galaxy: ## runs ansible-galaxy to install ansible role dependencies                         Usage: make ansible-galaxy
 	$(ENABLE_VIRTUALENV) ; ansible-galaxy install -r ./app/ansible/requirements.yml -p ./app/ansible/roles -f
 
-ansible-playbook: ## runs ansible-playbook on the APP_ENV inventory
-	$(ENABLE_VIRTUALENV) ; $(ANSIBLE_ENV); $(USER_ENV); cd ./app/ansible && ansible-playbook -u $$VAULT_SSH_CERT_PRINCIPAL -b ./playbooks/site.yml -e "@./vars/global.yml" -e "ansible_password=$$TF_VAR_provisioner_ssh_password"
+ansible-playbook: ## runs ansible-playbook on the APP_ENV inventory                                 Usage: ENV=./env/<dc-name>/<env-name>.sh make ansible-playbook
+	$(ENABLE_VIRTUALENV) ; $(ANSIBLE_ENV); $(USER_ENV); cd ./app/ansible && ansible-playbook -u $$VAULT_SSH_CERT_PRINCIPAL -b ./playbooks/site.yml -e "@./vars/overrides.yml" -e "ansible_password=$$TF_VAR_provisioner_ssh_password"
 
-package: ## packages the project into a tarball for distribution
+package: ## packages the project into a tarball for distribution                                    Usage: make package
 	./scripts/helpers.sh package
 `

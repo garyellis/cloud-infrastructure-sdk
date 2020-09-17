@@ -3,6 +3,7 @@ package config
 import (
 	"io/ioutil"
 
+	"github.com/garyellis/cloud-infrastructure-sdk/pkg/scaffold/ansibleterraform"
 	"gopkg.in/yaml.v2"
 )
 
@@ -65,6 +66,10 @@ func NewConfig() *Config {
 				NetworkLoadBalancer:   "github.com/garyellis/tf_module_aws_nlb?ref=v0.1.2",
 				Route53Zone:           "github.com/garyellis/tf_module_aws_route53_zone?ref=v0.1.2",
 				VsphereVirtualMachine: "github.com/garyellis/vsphere-virtualmachine",
+			},
+			AnsibleRoleSources: AnsibleRoleSources{
+				OSRoleSources:  []ansibleterraform.AnsibleRole{},
+				AppRoleSources: []ansibleterraform.AnsibleRole{},
 			},
 		},
 	}

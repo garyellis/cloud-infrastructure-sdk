@@ -9,9 +9,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 	"text/template"
 
+	"github.com/Masterminds/sprig"
 	"github.com/garyellis/cloud-infrastructure-sdk/pkg/scaffold/input"
 	"github.com/garyellis/cloud-infrastructure-sdk/pkg/util/fileutil"
 	"github.com/spf13/afero"
@@ -171,10 +171,7 @@ func (s *Scaffold) doRender(i input.Input, e input.File, absPath string) error {
 }
 
 func newTemplate(i input.Input) (*template.Template, error) {
-	t := template.New(i.Path).Funcs(template.FuncMap{
-		"title": strings.Title,
-		"lower": strings.ToLower,
-	})
+	t := template.New(i.Path).Funcs(sprig.TxtFuncMap())
 	if len(i.TemplateFuncs) > 0 {
 		t.Funcs(i.TemplateFuncs)
 	}
