@@ -25,4 +25,5 @@ func (t *VarsOverrideYml) GetInput() (input.Input, error) {
 
 const varsOverridesYmlTmpl = `---
 ### variables in this file are included via ansible playbook command line args
+{}
 `

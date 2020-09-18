@@ -27,7 +27,7 @@ func (t *ApplicationYml) GetInput() (input.Input, error) {
 
 const applicationYmlTmpl = `---
 - name: converge the application roles
-  hosts: {{.AppName}}
+  hosts: {{.AppName | replace "-" "_" }}
   roles:{{range $element := .AnsibleRoles}}
     - {{.Name}}
   {{- end}}

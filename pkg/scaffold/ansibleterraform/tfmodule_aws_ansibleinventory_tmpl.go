@@ -37,7 +37,7 @@ all:
     vault_pki_role_name: "${vault_pki_role_name}"
     lb_dns: "${lb_fqdn}"
   children:
-    {{.AppName}}:
+    {{.AppName | replace "-" "_" }}:
       vars:
       hosts:
 %{ for ip in nodes ~}
