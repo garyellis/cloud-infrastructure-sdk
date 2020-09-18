@@ -31,8 +31,7 @@ const terragruntAwsHclTmpl = `include {
 }
 
 terraform {
-  #source = "../../../../modules/{{.AppName}}/aws"
-  source = "github.com/foo/confluent"
+  source = "../../../../modules/{{.AppName}}/aws"
 }
 
 locals {
@@ -48,6 +47,7 @@ inputs = {
   dns_zone_id                     = local.vars.dns_zone_id
   vpc_id                          = local.vars.{{.AppName}}.vpc_id
   vault_addr                      = local.vars.vault_addr
+  vault_ssh_ca_path               = local.vars.vault_ssh_ca_path
 
   nodes_count                     = local.vars.{{.AppName}}.nodes_count
   nodes_instance_type             = local.vars.{{.AppName}}.nodes_instance_type
