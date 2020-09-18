@@ -31,7 +31,8 @@ const terragruntAwsHclTmpl = `include {
 }
 
 terraform {
-  source = "../../../../modules/{{.AppName}}/aws"
+  #source = "../../../../modules/{{.AppName}}/aws"
+  source = "github.com/foo/confluent"
 }
 
 locals {
@@ -45,19 +46,19 @@ inputs = {
   tags                            = local.vars.tags
   dns_domain                      = local.vars.dns_domain
   dns_zone_id                     = local.vars.dns_zone_id
-  vpc_id                          = local.vars.foo.vpc_id
+  vpc_id                          = local.vars.{{.AppName}}.vpc_id
   vault_addr                      = local.vars.vault_addr
 
-  nodes_count                     = local.vars.foo.nodes_count
-  nodes_instance_type             = local.vars.foo.nodes_instance_type
-  ami_id                          = local.vars.foo.ami_id
-  key_name                        = local.vars.foo.key_name
-  disable_api_termination         = local.vars.foo.disable_api_termination
-  instance_auto_recovery_enabled  = local.vars.foo.instance_auto_recovery_enabled
-  sg_attachments                  = local.vars.foo.sg_attachments
-  sg_egress_cidr_rules            = local.vars.foo.sg_egress_cidr_rules
-  sg_ingress_cidr_rules           = local.vars.foo.sg_ingress_cidr_rules
-  nodes_subnet_ids                = local.vars.foo.nodes_subnet_ids
-  lb_subnet_ids                   = local.vars.foo.lb_subnet_ids
+  nodes_count                     = local.vars.{{.AppName}}.nodes_count
+  nodes_instance_type             = local.vars.{{.AppName}}.nodes_instance_type
+  ami_id                          = local.vars.{{.AppName}}.ami_id
+  key_name                        = local.vars.{{.AppName}}.key_name
+  disable_api_termination         = local.vars.{{.AppName}}.disable_api_termination
+  instance_auto_recovery_enabled  = local.vars.{{.AppName}}.instance_auto_recovery_enabled
+  sg_attachments                  = local.vars.{{.AppName}}.sg_attachments
+  sg_egress_cidr_rules            = local.vars.{{.AppName}}.sg_egress_cidr_rules
+  sg_ingress_cidr_rules           = local.vars.{{.AppName}}.sg_ingress_cidr_rules
+  nodes_subnet_ids                = local.vars.{{.AppName}}.nodes_subnet_ids
+  lb_subnet_ids                   = local.vars.{{.AppName}}.lb_subnet_ids
 }
 `
