@@ -43,6 +43,8 @@ func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectNa
 		},
 		&scripts.DockerHelpersSh{},
 		&scripts.PythonHelpersSh{},
+		&scripts.VaultHelpersSh{},
+		&scripts.TerraformPluginsTxt{PluginUrls: userCfg.TerraformHelpers.TerraformPluginURLs},
 		&ansibleterraform.ReadmeMd{},
 		&ansibleterraform.AWSMainTf{
 			AppName:                           appName,
