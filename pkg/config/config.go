@@ -25,11 +25,12 @@ type DockerHelpers struct {
 }
 
 type TerraformHelpers struct {
-	TerraformVersion      string `yaml:"terraform_version,omitempty"`
-	TerragruntVersion     string `yaml:"terragrunt_version,omitempty"`
-	TerraformReleasesURL  string `yaml:"terraform_releases_url,omitempty"`
-	TerragruntDownloadURL string `yaml:"terragrunt_download_url,omitempty"`
-	TfenvRepoURL          string `yaml:"tfenv_repo_url,omitempty"`
+	TerraformVersion      string   `yaml:"terraform_version,omitempty"`
+	TerragruntVersion     string   `yaml:"terragrunt_version,omitempty"`
+	TerraformReleasesURL  string   `yaml:"terraform_releases_url,omitempty"`
+	TerragruntDownloadURL string   `yaml:"terragrunt_download_url,omitempty"`
+	TfenvRepoURL          string   `yaml:"tfenv_repo_url,omitempty"`
+	TerraformPluginURLs   []string `yaml:"terraform_plugin_urls,omitempty"`
 }
 
 type VaultHelpers struct {
