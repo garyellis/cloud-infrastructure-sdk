@@ -12,7 +12,7 @@ import (
 )
 
 // InitAnsibleTerraformScaffold creates or updates the ansible/terraform project
-func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string, vaultAddr, awsRegion, s3BucketName, s3BucketRegion string) error {
+func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string, vaultAddr, vaultSSHCa, awsRegion, s3BucketName, s3BucketRegion string) error {
 	userCfg := config.NewConfig()
 	userCfg.ReadConfigFile(configFilePath)
 
@@ -20,6 +20,9 @@ func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectNa
 		userCfg.AnsibleTerraform.S3BucketNamePrefix = s3BucketName
 		userCfg.AnsibleTerraform.S3BucketRegion = s3BucketRegion
 	}
+
+	terragruntVarsCfg := config.NewTerragruntVarsConfig()
+	terragruntVarsCfg.ReadConfigFile(terragruntVarsFilePath)
 
 	cfg := &input.Config{
 		AbsProjectPath: filepath.Join(projectutil.MustGetwd(), projectName),
@@ -109,7 +112,21 @@ func InitAnsibleTerraformScaffold(configFilePath, cliName, cliVersion, projectNa
 			err = s.Execute(cfg,
 				&ansibleterraform.EnvAwsSh{EnvName: envName, AppName: appName, DCName: dcName, AWSRegion: awsRegion, VaultAddr: vaultAddr},
 				&ansibleterraform.TerragruntAwsHcl{EnvName: envName, AppName: appName, DCName: dcName},
-				&ansibleterraform.TerragruntAwsVars{EnvName: envName, AppName: appName, DCName: dcName, AWSRegion: awsRegion, VaultAddr: vaultAddr},
+				&ansibleterraform.TerragruntAwsVars{
+					EnvName:        envName,
+					AppName:        appName,
+					DCName:         dcName,
+					AWSRegion:      awsRegion,
+					VaultAddr:      vaultAddr,
+					VaultSshCAPath: vaultSSHCa,
+					AwsAccountID:   terragruntVarsCfg.AwsAccountID,
+					AmiID:          terragruntVarsCfg.AmiID,
+					VpcID:          terragruntVarsCfg.VpcID,
+					LBSubnetIDs:    terragruntVarsCfg.LBSubnetIDs,
+					NodesSubnetIDs: terragruntVarsCfg.NodesSubnetIDs,
+					DNSDomain:      terragruntVarsCfg.DNSDomain,
+					DNSZoneID:      terragruntVarsCfg.DNSZoneID,
+				},
 			)
 		} else if infraProvider == "vmware" {
 			err = s.Execute(cfg,
