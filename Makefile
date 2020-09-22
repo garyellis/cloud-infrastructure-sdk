@@ -1,4 +1,4 @@
-VERSION=v0.2.7
+VERSION=v0.2.8
 NAME=cloud-infrastructure-sdk
 
 
