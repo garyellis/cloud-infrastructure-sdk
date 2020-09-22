@@ -19,6 +19,8 @@ type TerragruntAwsVars struct {
 	AwsAccountID   string   `yaml:"aws_account_id,omitempty"`
 	AmiID          string   `yaml:"ami_id,omitempty"`
 	VpcID          string   `yaml:"vpc_id,omitempty"`
+	KeyName        string   `yaml:"key_name,omitempty"`
+	SGAttachments  []string `yaml:"sg_attachments,omitempty"`
 	LBSubnetIDs    []string `yaml:"lb_subnet_ids,omitempty"`
 	NodesSubnetIDs []string `yaml:"nodes_subnet_ids,omitempty"`
 	DNSDomain      string   `yaml:"dns_domain,omitempty"`
@@ -50,12 +52,12 @@ tags:
   nodes_count: 1
   nodes_instance_type: t3.medium
   ami_id: {{ default "ami-3ecc8f46" .AmiID}}
-  key_name: ""
+  key_name: "{{.KeyName}}"
   disable_api_termination: false
   instance_auto_recovery_enabled: false
   vpc_id: "{{.VpcID}}"
   nodes_subnet_ids: [{{ range $index, $subnet := .NodesSubnetIDs }}{{if $index}},{{end}}"{{ $subnet }}"{{ end }}]
-  sg_attachments: []
+  sg_attachments: [{{ range $index, $sg := .SGAttachments }}{{if $index}},{{end}}"{{ $sg }}"{{ end }}]
   sg_egress_cidr_rules: []
   sg_ingress_cidr_rules: []
   lb_subnet_ids: [{{ range $index, $subnet := .LBSubnetIDs }}{{if $index}},{{end}}"{{ $subnet }}"{{ end }}]
