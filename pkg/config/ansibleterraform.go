@@ -1,7 +1,10 @@
 package config
 
 import (
+	"io/ioutil"
+
 	"github.com/garyellis/cloud-infrastructure-sdk/pkg/scaffold/ansibleterraform"
+	"gopkg.in/yaml.v2"
 )
 
 type AnsibleTerraform struct {
@@ -26,9 +29,18 @@ type AnsibleRoleSources struct {
 	OSRoleSources  []ansibleterraform.AnsibleRole `yaml:"os_roles,omitempty"`
 }
 
-/*
-type AnsibleRoleSource struct {
-	Src     string `yaml:"src,omitempty"`
-	Version string `yaml:"version,omitempty"`
+type TerragruntVarsConfig ansibleterraform.TerragruntAwsVars
+
+func NewTerragruntVarsConfig() *TerragruntVarsConfig {
+	c := &TerragruntVarsConfig{}
+	return c
 }
-*/
+
+func (c *TerragruntVarsConfig) ReadConfigFile(path string) error {
+	yamlfile, err := ioutil.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	err = yaml.Unmarshal(yamlfile, c)
+	return err
+}
