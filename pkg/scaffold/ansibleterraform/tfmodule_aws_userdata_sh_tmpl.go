@@ -23,9 +23,9 @@ func (t *AWSUserdataSh) GetInput() (input.Input, error) {
 	return t.Input, nil
 }
 
-const awsUserdataShTmpl = `
-#!/bin/bash
+const awsUserdataShTmpl = `#!/bin/bash
 
+exec > /var/log/bootstrap.log 2>&1
 
 VAULT_ADDR=${vault_addr}
 VAULT_SSH_CA_PATH=${vault_ssh_ca_path}
