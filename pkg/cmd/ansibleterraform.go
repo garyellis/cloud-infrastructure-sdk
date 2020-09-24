@@ -110,7 +110,7 @@ func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliNam
 		// render infrastructure provider specific templates
 		if infraProvider == "aws" {
 			err = s.Execute(cfg,
-				&ansibleterraform.EnvAwsSh{EnvName: envName, AppName: appName, DCName: dcName, AWSRegion: awsRegion, VaultAddr: vaultAddr},
+				&ansibleterraform.EnvAwsSh{EnvName: envName, AppName: appName, DCName: dcName, AWSRegion: awsRegion, VaultAddr: vaultAddr, VaultSSHCa: vaultSSHCa, VaultSSHRole: vaultSSHRole},
 				&ansibleterraform.TerragruntAwsHcl{EnvName: envName, AppName: appName, DCName: dcName},
 				&ansibleterraform.TerragruntAwsVars{
 					EnvName:        envName,
