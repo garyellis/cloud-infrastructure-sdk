@@ -18,7 +18,8 @@ func AnsibleTerraformCmd() *cobra.Command {
 	ansibleTerraformCmd.PersistentFlags().StringVar(&dcName, "dc-name", "my-dc", "the data center name")
 	ansibleTerraformCmd.PersistentFlags().StringSliceVarP(&envNames, "env-name", "e", []string{"development"}, "one or more environment names")
 	ansibleTerraformCmd.PersistentFlags().StringVar(&vaultAddr, "vault-addr", "https://vault-demo.ews.works", "The hashicorp vault server")
-	ansibleTerraformCmd.PersistentFlags().StringVar(&vaultSSHCa, "vault-ssh-ca", "", "The hashicorp vault ssh ca path")
+	ansibleTerraformCmd.PersistentFlags().StringVar(&vaultSSHCa, "vault-ssh-ca", "", "The hashicorp vault ssh ca secret engine path")
+	ansibleTerraformCmd.PersistentFlags().StringVar(&vaultSSHRole, "vault-ssh-role", "", "The hashicorp vault ssh role name")
 	ansibleTerraformCmd.PersistentFlags().StringVar(&awsRegion, "aws-region", "us-west-2", "The aws region when the infrastructure provider is type aws")
 	ansibleTerraformCmd.PersistentFlags().StringVar(&s3BucketName, "s3-bucket-name", "ews-works", "The remote state s3 bucket name")
 	ansibleTerraformCmd.PersistentFlags().StringVar(&s3BucketRegion, "s3-bucket-region", "us-west-2", "The remote state s3 bucket region")
@@ -32,7 +33,7 @@ func InitAnsibleTerraformProjectCmd() *cobra.Command {
 		Use:   "init",
 		Short: "creates a new ansible-terraform project",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			err := sdkcmd.InitAnsibleTerraformScaffold(configFile, terragruntVarsFile, cliName, Version, projectName, appName, infraProvider, dcName, envNames, vaultAddr, vaultSSHCa, awsRegion, s3BucketName, s3BucketRegion)
+			err := sdkcmd.InitAnsibleTerraformScaffold(configFile, terragruntVarsFile, cliName, Version, projectName, appName, infraProvider, dcName, envNames, vaultAddr, vaultSSHCa, vaultSSHRole, awsRegion, s3BucketName, s3BucketRegion)
 			return err
 		},
 	}
