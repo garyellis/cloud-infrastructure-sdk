@@ -28,7 +28,7 @@ const VaultHelpersShTmpl = `#!/bin/bash
 #### edits to this file will be overwritten the next time {{.CliName}} runs on this project
 
 # vault-helpers defaults
-VAULT_SSH_CERT_PRINCIPAL=${VAULT_SSH_CERT_PRINCIPAL:-provisioner}
+VAULT_SSH_CERT_PRINCIPAL=${VAULT_SSH_CERT_PRINCIPAL}
 
 # source the project config when it exists
 [ -e "./scripts/config.sh" ] && source ./scripts/config.sh

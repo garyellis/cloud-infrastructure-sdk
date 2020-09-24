@@ -12,7 +12,7 @@ import (
 )
 
 // InitAnsibleTerraformScaffold creates or updates the ansible/terraform project
-func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string, vaultAddr, vaultSSHCa, vaultSSHRole, awsRegion, s3BucketName, s3BucketRegion string) error {
+func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string, vaultAddr, vaultSSHCa, vaultSSHRole, sshUser, awsRegion, s3BucketName, s3BucketRegion string) error {
 	userCfg := config.NewConfig()
 	userCfg.ReadConfigFile(configFilePath)
 
@@ -110,7 +110,16 @@ func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliNam
 		// render infrastructure provider specific templates
 		if infraProvider == "aws" {
 			err = s.Execute(cfg,
-				&ansibleterraform.EnvAwsSh{EnvName: envName, AppName: appName, DCName: dcName, AWSRegion: awsRegion, VaultAddr: vaultAddr, VaultSSHCa: vaultSSHCa, VaultSSHRole: vaultSSHRole},
+				&ansibleterraform.EnvAwsSh{
+					EnvName:      envName,
+					AppName:      appName,
+					DCName:       dcName,
+					AWSRegion:    awsRegion,
+					VaultAddr:    vaultAddr,
+					VaultSSHCa:   vaultSSHCa,
+					VaultSSHRole: vaultSSHRole,
+					SSHUser:      sshUser,
+				},
 				&ansibleterraform.TerragruntAwsHcl{EnvName: envName, AppName: appName, DCName: dcName},
 				&ansibleterraform.TerragruntAwsVars{
 					EnvName:        envName,

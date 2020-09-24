@@ -19,6 +19,7 @@ var (
 	vaultAddr          string
 	vaultSSHCa         string
 	vaultSSHRole       string
+	sshUser            string
 	awsRegion          string
 	terragruntVarsFile string
 )
