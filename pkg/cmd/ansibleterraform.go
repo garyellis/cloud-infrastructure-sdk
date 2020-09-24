@@ -12,7 +12,7 @@ import (
 )
 
 // InitAnsibleTerraformScaffold creates or updates the ansible/terraform project
-func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string, vaultAddr, vaultSSHCa, awsRegion, s3BucketName, s3BucketRegion string) error {
+func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string, vaultAddr, vaultSSHCa, vaultSSHRole, awsRegion, s3BucketName, s3BucketRegion string) error {
 	userCfg := config.NewConfig()
 	userCfg.ReadConfigFile(configFilePath)
 

@@ -18,6 +18,7 @@ var (
 	s3BucketRegion     string
 	vaultAddr          string
 	vaultSSHCa         string
+	vaultSSHRole       string
 	awsRegion          string
 	terragruntVarsFile string
 )
