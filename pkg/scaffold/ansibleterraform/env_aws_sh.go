@@ -22,6 +22,7 @@ type EnvAwsSh struct {
 	VaultAddr           string
 	VaultSSHCa          string
 	VaultSSHRole        string
+	SSHUser             string
 	TfLiveBaseDir       string
 	AnsibleInventoryDir string
 }
@@ -46,12 +47,13 @@ export AWS_CA_BUNDLE=/etc/ssl/certs/ca-bundle.crt
 export AWS_REGION={{.AWSRegion}}
 export ASSUME_ROLE_ARN=${ASSUME_ROLE_ARN} # set by user
 export VAULT_ADDR={{.VaultAddr}}
-export VAULT_SSH_CERT_PRINCIPAL=${VAULT_SSH_CERT_PRINCIPAL} # set by user
-export VAULT_SSH_CLIENT_SIGNER_PATH={{.VaultSSHCa}}/sign/{{.VaultSSHRole}}# set by user
+export VAULT_SSH_CERT_PRINCIPAL=${VAULT_SSH_CERT_PRINCIPAL:-{{.SSHUser}}} # set by user
+export VAULT_SSH_CLIENT_SIGNER_PATH={{.VaultSSHCa}}/sign/{{.VaultSSHRole}} # set by user
 
 
-## set environment for the automation user
-export AUTOMATION_USER_VAULT_PATHS=() # user defined list
+## set environment for the automation user.
+## the AUTOMATION_USER_VAULT_PATHS need to be templated
+export AUTOMATION_USER_VAULT_PATHS=( 
   provision/data/trusted-orchestrator/corp
   provision/data/trusted-orchestrator/aws-iam-svc-terraform-dev
 )
