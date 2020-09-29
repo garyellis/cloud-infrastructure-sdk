@@ -12,7 +12,7 @@ import (
 )
 
 // InitAnsibleTerraformScaffold creates or updates the ansible/terraform project
-func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string, vaultAddr, vaultSSHCa, vaultSSHRole, sshUser, awsRegion, s3BucketName, s3BucketRegion string) error {
+func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliName, cliVersion, projectName, appName, infraProvider, dcName string, envNames []string, vaultAddr, vaultSSHCa, vaultSSHRole, sshUser, awsRegion, s3BucketName, s3BucketRegion, vsphereServer string) error {
 	userCfg := config.NewConfig()
 	userCfg.ReadConfigFile(configFilePath)
 
@@ -20,9 +20,6 @@ func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliNam
 		userCfg.AnsibleTerraform.S3BucketNamePrefix = s3BucketName
 		userCfg.AnsibleTerraform.S3BucketRegion = s3BucketRegion
 	}
-
-	terragruntVarsCfg := config.NewTerragruntVarsConfig()
-	terragruntVarsCfg.ReadConfigFile(terragruntVarsFilePath)
 
 	cfg := &input.Config{
 		AbsProjectPath: filepath.Join(projectutil.MustGetwd(), projectName),
@@ -109,6 +106,9 @@ func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliNam
 
 		// render infrastructure provider specific templates
 		if infraProvider == "aws" {
+			terragruntVarsCfg := config.NewTerragruntVarsConfig()
+			terragruntVarsCfg.ReadConfigFile(terragruntVarsFilePath)
+
 			err = s.Execute(cfg,
 				&ansibleterraform.EnvAwsSh{
 					EnvName:      envName,
@@ -140,10 +140,33 @@ func InitAnsibleTerraformScaffold(configFilePath, terragruntVarsFilePath, cliNam
 				},
 			)
 		} else if infraProvider == "vmware" {
+			terragruntVarsCfg := config.NewTerragruntVsphereVarsConfig()
+			terragruntVarsCfg.ReadConfigFile(terragruntVarsFilePath)
 			err = s.Execute(cfg,
-				&ansibleterraform.EnvVmwareSh{EnvName: envName, AppName: appName, DCName: dcName, VaultAddr: vaultAddr},
+				&ansibleterraform.EnvVmwareSh{
+					EnvName:       envName,
+					AppName:       appName,
+					DCName:        dcName,
+					VsphereServer: vsphereServer,
+					VaultAddr:     vaultAddr,
+					VaultSSHCa:    vaultSSHCa,
+					VaultSSHRole:  vaultSSHRole,
+				},
 				&ansibleterraform.TerragruntVMwareHcl{EnvName: envName, AppName: appName, DCName: dcName},
-				&ansibleterraform.TerragruntVMwareVars{EnvName: envName, AppName: appName, DCName: dcName, VaultAddr: vaultAddr},
+				&ansibleterraform.TerragruntVMwareVars{
+					EnvName:              envName,
+					AppName:              appName,
+					DCName:               dcName,
+					VaultAddr:            vaultAddr,
+					VaultSshCAPath:       vaultSSHCa,
+					VsphereDCName:        terragruntVarsCfg.VsphereDCName,
+					VsphereClusterName:   terragruntVarsCfg.VsphereClusterName,
+					VsphereFolder:        terragruntVarsCfg.VsphereFolder,
+					VsphereIpv4Gateway:   terragruntVarsCfg.VsphereIpv4Gateway,
+					VsphereNetworkNames:  terragruntVarsCfg.VsphereNetworkNames,
+					VsphereDataStoreName: terragruntVarsCfg.VsphereDataStoreName,
+					VsphereNodes:         terragruntVarsCfg.VsphereNodes,
+				},
 			)
 		}
 

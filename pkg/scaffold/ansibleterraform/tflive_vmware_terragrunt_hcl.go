@@ -35,7 +35,7 @@ terraform {
 }
 
 locals {
-  vars    = yamldecode(file("${get_terragrunt_dir()}/${find_in_parent_folders("vars.yaml")}"))
+  vars = yamldecode(file("${get_terragrunt_dir()}/../vars.yaml"))
 }
 
 inputs = {
