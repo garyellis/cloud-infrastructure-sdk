@@ -18,8 +18,12 @@ type EnvVmwareSh struct {
 	EnvName             string
 	AppName             string
 	DCName              string
+	VsphereServer       string
 	AWSRegion           string
 	VaultAddr           string
+	VaultSSHCa          string
+	VaultSSHRole        string
+	SSHUser             string
 	TfLiveBaseDir       string
 	AnsibleInventoryDir string
 }
@@ -40,11 +44,13 @@ func (t *EnvVmwareSh) GetInput() (input.Input, error) {
 }
 
 const envVmwareTmpl = `
+# export AWS_CA_BUNDLE=/etc/ssl/certs/ca-bundle.crt
+
+
 ## setup the vault environment
-export AWS_CA_BUNDLE=/etc/ssl/certs/ca-bundle.crt
 export VAULT_ADDR={{.VaultAddr}}
-export VAULT_SSH_CERT_PRINCIPAL=${VAULT_SSH_CERT_PRINCIPAL} # set by user
-export VAULT_SSH_CLIENT_SIGNER_PATH=ssh-client-signer/sign/vault-dev_ansible
+export VAULT_SSH_CERT_PRINCIPAL=${VAULT_SSH_CERT_PRINCIPAL:-{{.SSHUser}}} # set by user
+export VAULT_SSH_CLIENT_SIGNER_PATH={{.VaultSSHCa}}/sign/{{.VaultSSHRole}} # set by user
 
 
 ## set environment for the automation user
@@ -66,9 +72,9 @@ fi
 ## setup the iaas provider
 ## iaas provider depends on s3 remote state
 export AWS_REGION={{.AWSRegion}}
-export ASSUME_ROLE_ARN=$ASSUME_ROLE_ARN # set by the user
+export ASSUME_ROLE_ARN=$ASSUME_ROLE_ARN
 
-export VSPHERE_SERVER=<set-by-user>
+export VSPHERE_SERVER={{.VsphereServer}}
 
 if [ "$VSPHERE_USER" == "" ]; then
   echo VSPHERE_USER is not set
@@ -103,6 +109,5 @@ fi
 export IAAS_ENV=./{{.TfLiveBaseDir}}/{{.DCName}}/{{.EnvName}}
 export APP_ENV=./{{.AnsibleInventoryDir}}/{{.DCName}}/{{.EnvName}}
 
-## setup a provisioner user hackaround related to ssh agent keys and password
 export ANSIBLE_SSH_ARGS="-o PreferredAuthentications=password,publickey"
 `

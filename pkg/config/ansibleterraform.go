@@ -44,3 +44,19 @@ func (c *TerragruntVarsConfig) ReadConfigFile(path string) error {
 	err = yaml.Unmarshal(yamlfile, c)
 	return err
 }
+
+type TerragruntVsphereVarsConfig ansibleterraform.TerragruntVMwareVars
+
+func NewTerragruntVsphereVarsConfig() *TerragruntVsphereVarsConfig {
+	c := &TerragruntVsphereVarsConfig{}
+	return c
+}
+
+func (c *TerragruntVsphereVarsConfig) ReadConfigFile(path string) error {
+	yamlfile, err := ioutil.ReadFile(path)
+	if err != nil {
+		return err
+	}
+	err = yaml.Unmarshal(yamlfile, c)
+	return err
+}

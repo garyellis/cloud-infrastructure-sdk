@@ -22,6 +22,7 @@ var (
 	sshUser            string
 	awsRegion          string
 	terragruntVarsFile string
+	vSphereServer      string
 )
 
 func NewRootCmd() *cobra.Command {
